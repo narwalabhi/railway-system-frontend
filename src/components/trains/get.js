@@ -57,6 +57,7 @@ function Get() {
   const classes = useStyles();
   const [trainForEdit, setTrainForEdit] = useState(null);
   const [trains, setTrains] = useState([]);
+  const [isAdd, setIsAdd] = useState(false)
   const [open, setOpen] = useState();
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
@@ -104,10 +105,6 @@ function Get() {
     });
   };
 
-  const deleteTrains = async (id) => {
-    await axios.delete(`http://localhost:3003/users/${id}`);
-    loadTrains();
-  };
 
   const getDuration = (hrs, mins) => {
     return "" + hrs + " hrs " + mins + " mins";
@@ -125,23 +122,59 @@ function Get() {
           "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
       },
     })
+    return updatedTrain;
     console.log((await updatedTrain).data + "updated");
+  }
+
+  const addTrain = (train) => {
+    console.log(JSON.stringify(train));
+    const newTrain = axios.post("http://localhost:8084/train/add",train,{
+      mode: "no-cors",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        authorization:
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
+      },
+    })
+    console.log( newTrain.data + "new");
+    return newTrain;
   };
 
-  const addOrEdit = (train) => {
-    const trainData = updateTrain(train);
-    console.log(trainData + "addOrEdit");
+  const deleteTrain = (train) => {
+    console.log(train + " delete");
+    const deletedTrain = axios.delete("http://localhost:8084/train/delete/"+train.id,{
+      mode: "no-cors",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        authorization:
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
+      },
+    })
+  }
+
+  const addOrEdit = (train, isAdd) => {
+    if(isAdd){
+      const newTrain = addTrain(train);
+      console.log(newTrain);
+    }else{
+      const updateTrain = updateTrain(train);
+      console.log(train + "addOrEdit");
+    }
   };
 
   const onClickBtn = () => {
     setOpen(true);
     setTrainForEdit(null);
+    setIsAdd(true)
     console.log(open);
   };
 
   const openInPopup = (item) => {
     setOpen(true);
     setTrainForEdit(item);
+    setIsAdd(false)
     console.log(open);
   };
 
@@ -207,7 +240,12 @@ function Get() {
                   >
                     <EditOutlinedIcon fontSize="small" />
                   </Button>
-                  <Button color="secondary">
+                  <Button color="secondary"
+                    onClick={()=>{
+                      setTrainForEdit(item)
+                      deleteTrain(item)
+                    }}
+                  >
                     <CloseIcon fontSize="small" />
                   </Button>
                 </TableCell>
@@ -218,7 +256,7 @@ function Get() {
         <TblPagination />
       </Paper>
       <Popup title="Add Train" openPopup={open} setOpenPopup={setOpen}>
-        <Add trainForEdit={trainForEdit} addOrEdit={addOrEdit} setOpen={setOpen} />
+        <Add trainForEdit={trainForEdit} addOrEdit={addOrEdit} setOpen={setOpen} isAdd={isAdd}/>
       </Popup>
     </div>
   );

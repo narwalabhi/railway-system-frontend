@@ -45,11 +45,9 @@ const initialFValues = {
 
 function Add(props) {
   const classes = useStyles();
-  const { addOrEdit, trainForEdit, setOpen} = props;
+  const { addOrEdit, trainForEdit, setOpen, isAdd} = props;
   const [values, setValues] = useState(initialFValues);
-  const [arrivalTime, setarrivalTime] = useState();
-  const [departureTime, setdepartureTime] = useState();
-
+  
   const handleArrivalTimeChange = (date) => {
     // const time = (date.getUTCHours() +":" + date.getUTCMinutes() + ":" + date.getUTCSeconds());
     const time = date.toTimeString().split(' ')[0]
@@ -75,14 +73,10 @@ function Add(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addOrEdit(values);
+    addOrEdit(values, isAdd);
     setOpen(false)
     console.log(values + "submit");
   };
-
-  const handleChange = (event) =>{
-    setValues()
-  }
 
   return (
     <Container>
@@ -96,7 +90,9 @@ function Add(props) {
               value={values.fromStationCode}
               label="From"
               placeholder="Station Code"
-              onChange={(event)=>setValues(prev => {return {...prev,fromStationCode:event.target.value}})}
+              onChange={(event)=>{setValues(prev => {
+                console.log(event.target.value);
+                return {...prev,fromStationCode:event.target.value}})}}
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
@@ -108,7 +104,9 @@ function Add(props) {
               id="to-station-code"
               label="To"
               placeholder="Station Code"
-              onChange={(event)=>setValues(prev => {return {...prev,toStationCode:event.target.value}})}
+              onChange={(event)=>{setValues(prev => {
+                console.log(event.target.value);
+                return {...prev,toStationCode:event.target.value}})}}
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
