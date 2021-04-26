@@ -122,7 +122,7 @@ function Users() {
 
   const addUser = (trip) => {
     console.log(JSON.stringify(trip));
-    const newUser = axios.post("http://localhost:8084/train/trips/add",trip,{
+    const newUser = axios.post("http://localhost:8084/user/add",trip,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",

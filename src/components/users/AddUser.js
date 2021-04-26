@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const initialFValues = {
-  fisrtName:"",
+  firstName:"",
   lastName: "",
   email: "",
   dob: "",
@@ -58,8 +58,8 @@ function AddUser(props) {
             <TextField
               fullWidth
               required
-              id="fisrtName"
-              value={values.fisrtName}
+              id="firstName"
+              value={values.firstName}
               label="FirstName"
               placeholder="First Name"
               onChange={(event)=>{setValues(prev => {
