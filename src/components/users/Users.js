@@ -50,7 +50,7 @@ const headCells = [
 function Users() {
   const classes = useStyles();
   const [userForEdit, setUserForEdit] = useState(null);
-  const [trips, setTrips] = useState([]);
+  const [users, setUsers] = useState([]);
   const [isAdd, setIsAdd] = useState(false)
   const [open, setOpen] = useState();
   const [filterFn, setFilterFn] = useState({
@@ -59,9 +59,9 @@ function Users() {
     },
   });
 
-  const loadTrips = async () => {
+  const loadUsers = async () => {
     try {
-      const trips = await axios.get("http://localhost:8084/user/getAll", {
+      const users = await axios.get("http://localhost:8084/user/getAll", {
         mode: "no-cors",
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -70,15 +70,15 @@ function Users() {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
         },
       });
-      setTrips(trips.data);
-      console.log(trips.data);
+      setUsers(users.data);
+      console.log(users.data);
     } catch (err) {
       console.log(err);
     }
   };
 
   useEffect(() => {
-    loadTrips();
+    loadUsers();
     console.log(open);
   }, []);
 
@@ -87,14 +87,14 @@ function Users() {
     TblHead,
     TblPagination,
     recordsAfterPagingAndSorting,
-  } = useTable(trips, headCells, filterFn);
+  } = useTable(users, headCells, filterFn);
 
   const handleSearch = (e) => {
     let target = e.target;
     setFilterFn({
       fn: (items) => {
         if (target.value == "") return items;
-        else return items.filter((x) => x.tripId.includes(target.value));
+        else return items.filter((x) => x.email.includes(target.value));
       },
     });
   };
@@ -107,7 +107,7 @@ function Users() {
   const updateUser = async (user) => {
     console.log(user.name + " " + user.number + " " );
     console.log(JSON.stringify(user) + "data");
-    const updatedTrip = axios.put("http://localhost:8084/train/trips/update/"+userForEdit.id,user,{
+    const updatedUser = axios.put("http://localhost:8084/user/update/"+userForEdit.id,user,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -116,13 +116,12 @@ function Users() {
           "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
       },
     })
-    return updatedTrip;
-    console.log((await updatedTrip).data + "updated");
+    return updatedUser;
   }
 
-  const addUser = (trip) => {
-    console.log(JSON.stringify(trip));
-    const newUser = axios.post("http://localhost:8084/user/add",trip,{
+  const addUser = (user) => {
+    console.log(JSON.stringify(user));
+    const newUser = axios.post("http://localhost:8084/user/add",user,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -137,7 +136,7 @@ function Users() {
 
   const deleteUser = (user) => {
     console.log(user + " delete");
-    const deletedTrain = axios.delete("http://localhost:8084/user/delete/"+user.id,{
+    const deletedUser = axios.delete("http://localhost:8084/user/delete/"+user.id,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -176,19 +175,24 @@ function Users() {
     console.log(open);
   };
 
+  const getDOB = (dateString) => {
+    const date = new Date(dateString);
+    return date.getDate() + "-" + (date.getMonth()+1) + "-" + date.getFullYear();
+  }
+
   return (
     <div style={{marginTop:'4%', width:'100%'}}>
       <PageHeader
-        title="Trips"
-        subTitle="List of available Trips in the database"
+        title="Users"
+        subTitle="List of registered users."
         icon={<PeopleIcon fontSize="large" />}
       />
       <Paper className={classes.pageContent}>
         {/* <EmployeeForm /> */}
         <Toolbar>
           <Controls.Input
-            label="Search Trains"
-            placeholder="Enter Train No."
+            label="Search Users"
+            placeholder="Enter email"
             className={classes.searchInput}
             InputProps={{
               startAdornment: (
@@ -199,14 +203,6 @@ function Users() {
             }}
             onChange={handleSearch}
           />
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            className={classes.newButton}
-            onClick={onClickBtn}
-          >
-            Add New
-          </Button>
         </Toolbar>
         <TblContainer>
           <TblHead />
@@ -216,7 +212,7 @@ function Users() {
                 <TableCell>{item.id}</TableCell>
                 <TableCell>{getName(item.firstName, item.lastName)}</TableCell>
                 <TableCell>{item.email}</TableCell>
-                <TableCell>{item.dob}</TableCell>
+                <TableCell>{getDOB(item.dob)}</TableCell>
                 <TableCell>{item.mobileNumber}</TableCell>
                 <TableCell>{item.roles}</TableCell>
                 <TableCell>
