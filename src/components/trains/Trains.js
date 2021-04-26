@@ -215,8 +215,8 @@ function Trains() {
           <TableBody>
             {recordsAfterPagingAndSorting().map((item) => (
               <TableRow key={item.number}>
-                <TableCell>{item.name}</TableCell>
                 <TableCell>{item.number}</TableCell>
+                <TableCell>{item.name}</TableCell>
                 <TableCell>{item.fromStationCode}</TableCell>
                 <TableCell>{item.toStationCode}</TableCell>
                 <TableCell>{item.firstAcSeats}</TableCell>
