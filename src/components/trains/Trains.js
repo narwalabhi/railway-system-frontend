@@ -179,7 +179,7 @@ function Trains() {
   };
 
   return (
-    <div style={{marginTop:'4%'}}>
+    <div style={{marginTop:'4%',width:'100%'}}>
       <PageHeader
         title="Trains"
         subTitle="List of available Trains in the database"
