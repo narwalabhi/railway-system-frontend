@@ -51,7 +51,7 @@ function Add(props) {
   const handleArrivalTimeChange = (date) => {
     // const time = (date.getUTCHours() +":" + date.getUTCMinutes() + ":" + date.getUTCSeconds());
     const time = date.toTimeString().split(' ')[0]
-    setValues({ arrivalTime: date, arrival : time});
+    // setValues({ arrivalTime: date, arrival : time});
     setValues(prev => {return {...prev,arrivalTime:date, arrival: time}})
   };
 
@@ -59,7 +59,7 @@ function Add(props) {
     console.log(date);
     // const time = (date.getUTCHours() +":" + date.getUTCMinutes() + ":" + date.getUTCSeconds());
     const time =  date.toTimeString().split(' ')[0]
-    setValues({departureTime:date, departure: time});
+    // setValues({departureTime:date, departure: time});
     setValues(prev => {return {...prev,departureTime:date, departure: time}})
   };
 

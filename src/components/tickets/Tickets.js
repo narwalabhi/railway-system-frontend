@@ -139,13 +139,13 @@ function Tickets() {
 
   const deleteTicket = (ticket) => {
     console.log(ticket + " delete");
-    const deletedTicket = axios.delete("http://localhost:8084/user/delete/"+ticket.id,{
+    const deletedTicket = axios.delete("http://localhost:8084/booking/delete/"+ticket.ticketId,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ4MzQyNSwiaWF0IjoxNjE5NDQ3NDI1LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.JMBjtl1p-1BAAtLZcZADa3k2_YRjBd2dEBqwkUTaq9I",
       },
     })
     console.log(deletedTicket.data);
