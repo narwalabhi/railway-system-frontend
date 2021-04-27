@@ -8,6 +8,7 @@ import Tickets from "./components/tickets/Tickets";
 import MyDrawer from "./components/drawer/MyDrawer";
 import { makeStyles } from "@material-ui/core/styles";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import TripSchedules from "./components/tripSchedules/TripSchedules";
 
 const useStyles = makeStyles({
   container: {
@@ -32,6 +33,12 @@ function App() {
             render={(props) => <Stations {...props} />}
           />
           <Route exact path="/trips" render={(props) => <Trips {...props} />} />
+
+          <Route
+            exact
+            path="/trip-schedules"
+            render={(props) => <TripSchedules {...props} />}
+          />
           <Route exact path="/users" render={(props) => <Users {...props} />} />
           <Route
             exact

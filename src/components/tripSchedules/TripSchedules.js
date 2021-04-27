@@ -8,8 +8,7 @@ import Controls from "../controls/Controls";
 import Popup from "../controls/Popup";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import CloseIcon from "@material-ui/icons/Close";
-import CardTravelIcon from "@material-ui/icons/CardTravel";
-import AddTrip from './AddTrip'
+import ScheduleIcon from "@material-ui/icons/Schedule";
 import {
   Paper,
   makeStyles,
@@ -20,12 +19,15 @@ import {
   InputAdornment,
   Button,
 } from "@material-ui/core";
+import AddTripSchedule from "./AddTripSchedule";
 // import Add from "./add";
 
 const useStyles = makeStyles((theme) => ({
   pageContent: {
     margin: theme.spacing(1),
     padding: theme.spacing(1),
+    height:'100%',
+    width:'100%'
   },
   searchInput: {
     width: "75%",
@@ -37,19 +39,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const headCells = [
+  { id: "id", label: "TripSchedule Id" },
   { id: "tripId", label: "Trip Id" },
-  { id: "number", label: "Train No." },
-  { id: "src", label: "Source Station Code" },
-  { id: "dest", label: "Destination Station Code" },
-  { id: "baseFare", label: "Base Fare(₹)" },
-  { id: "duration", label: "Duration" },
+  { id: "tripDate", label: "Trip Date" },
+  { id: "firstAcAvailableSeats", label: "1AC Avl." },
+  { id: "secondAcAvailableSeats", label: "2AC Avl." },
+  { id: "thirdAcAvailableSeats", label: "3AC Avl." },
+  { id: "FirstClassAcAvailableSeats", label: "FC Avl." },
+  { id: "chairCarAcAvailableSeats", label: "CC Avl." },
+  { id: "SleeperAvailableSeats", label: "SS Avl." },
+  { id: "status", label: "Status" },
   { id: "action", label: "Action" },
 ];
 
-function Trips() {
+function TripSchedules() {
   const classes = useStyles();
-  const [tripForEdit, setTripForEdit] = useState(null);
-  const [trips, setTrips] = useState([]);
+  const [tripScheduleForEdit, setTripScheduleForEdit] = useState(null);
+  const [tripSchedules, setTripSchedules] = useState([]);
   const [isAdd, setIsAdd] = useState(false)
   const [open, setOpen] = useState();
   const [filterFn, setFilterFn] = useState({
@@ -58,26 +64,25 @@ function Trips() {
     },
   });
 
-  const loadTrips = async () => {
+  const loadTripSchedules = async () => {
     try {
-      const trips = await axios.get("http://localhost:8084/train/trips/get", {
+      const tripSchedules = await axios.get("http://localhost:8084/train/trip-schedules/getAll", {
         mode: "no-cors",
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json",
           authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ4MzQyNSwiaWF0IjoxNjE5NDQ3NDI1LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.JMBjtl1p-1BAAtLZcZADa3k2_YRjBd2dEBqwkUTaq9I",
-        },
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTU3MTUzMiwiaWF0IjoxNjE5NDg1MTMyLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.rdgyllXPFER41NR5x0goKGckOgaOFt4_98YVyv_noew"      },
       });
-      setTrips(trips.data);
-      console.log(trips.data);
+      setTripSchedules(tripSchedules.data);
+      console.log(tripSchedules.data);
     } catch (err) {
       console.log(err);
     }
   };
 
   useEffect(() => {
-    loadTrips();
+    loadTripSchedules();
     console.log(open);
   }, []);
 
@@ -86,7 +91,7 @@ function Trips() {
     TblHead,
     TblPagination,
     recordsAfterPagingAndSorting,
-  } = useTable(trips, headCells, filterFn);
+  } = useTable(tripSchedules, headCells, filterFn);
 
   const handleSearch = (e) => {
     let target = e.target;
@@ -103,63 +108,62 @@ function Trips() {
     return "" + hrs + " hrs " + mins + " mins";
   };
 
-  const updateTrip = async (trip) => {
-    console.log(trip.name + " " + trip.number + " " );
-    console.log(JSON.stringify(trip) + "data");
-    const updatedTrip = axios.put("http://localhost:8084/train/trips/update/"+tripForEdit.tripId,trip,{
+  const updateTripSchedule = async (tripSchedule) => {
+    console.log(tripSchedule.name + " " + tripSchedule.number + " " );
+    console.log(JSON.stringify(tripSchedule) + "data");
+    const updatedTripSchedule = axios.put("http://localhost:8084/train/trip-schedules/update/"+tripScheduleForEdit.id,tripSchedule,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ4MzQyNSwiaWF0IjoxNjE5NDQ3NDI1LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.JMBjtl1p-1BAAtLZcZADa3k2_YRjBd2dEBqwkUTaq9I",
-      },
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTU3MTUzMiwiaWF0IjoxNjE5NDg1MTMyLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.rdgyllXPFER41NR5x0goKGckOgaOFt4_98YVyv_noew"      },
     })
-    return updatedTrip;
-    console.log((await updatedTrip).data + "updated");
+    console.log((await updatedTripSchedule).data + "updated");
+    return updatedTripSchedule;
   }
 
-  const addTrip = (trip) => {
+  const addTripSchedule = (trip) => {
     console.log(JSON.stringify(trip));
-    const newTrain = axios.post("http://localhost:8084/train/trips/add",trip,{
+    const newTripSchedule = axios.post("http://localhost:8084/train/trip-schedules/add",trip,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ4MzQyNSwiaWF0IjoxNjE5NDQ3NDI1LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.JMBjtl1p-1BAAtLZcZADa3k2_YRjBd2dEBqwkUTaq9I",
-      },
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTU3MTUzMiwiaWF0IjoxNjE5NDg1MTMyLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.rdgyllXPFER41NR5x0goKGckOgaOFt4_98YVyv_noew"      },
     })
-    console.log( newTrain.data + "new");
-    return newTrain;
+    console.log( newTripSchedule.data + "new");
+    return newTripSchedule;
   };
 
-  const deleteTrip = (trip) => {
-    console.log(trip + " delete");
-    const deletedTrain = axios.delete("http://localhost:8084/train/trips/delete/"+trip.tripId,{
+  const deleteTripSchedule = (tripSchedule) => {
+    console.log(tripSchedule + " delete");
+    const deletedTripSchedule = axios.delete("http://localhost:8084/train/trip-schedules/delete/"+tripSchedule.id,{
       mode: "no-cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ4MzQyNSwiaWF0IjoxNjE5NDQ3NDI1LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.JMBjtl1p-1BAAtLZcZADa3k2_YRjBd2dEBqwkUTaq9I",
-      },
-    })
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTU3MTUzMiwiaWF0IjoxNjE5NDg1MTMyLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.rdgyllXPFER41NR5x0goKGckOgaOFt4_98YVyv_noew"    
+    },
+    });
+    console.log(deletedTripSchedule.dat);
   }
 
   const addOrEdit = (trip, isAdd) => {
     if(isAdd){
-      const newTrip = addTrip(trip);
-      console.log(newTrip);
+      const newTripSchedule = addTripSchedule(trip);
+      console.log(newTripSchedule);
     }else{
-      const updatedTrip = updateTrip(trip);
-      console.log(trip + "addOrEdit");
+      const updatedTripSchedule = updateTripSchedule(trip);
+      console.log(updatedTripSchedule + "addOrEdit");
     }
   };
 
   const onClickBtn = () => {
     setOpen(true);
-    setTripForEdit(null);
+    setTripScheduleForEdit(null);
     setIsAdd(true)
     console.log(open);
   };
@@ -167,16 +171,16 @@ function Trips() {
   const openInPopup = (item) => {
     setOpen(true);
     setIsAdd(false)
-    setTripForEdit(item);
+    setTripScheduleForEdit(item);
     console.log(open);
   };
 
   return (
     <div style={{marginTop:'4%', width:'100%'}}>
       <PageHeader
-        title="Trips"
-        subTitle="List of available Trips in the database"
-        icon={<CardTravelIcon fontSize="large" />}
+        title="Trip Schedules"
+        subTitle="List of available trip schedules in the database"
+        icon={<ScheduleIcon fontSize="large" />}
       />
       <Paper className={classes.pageContent}>
         {/* <EmployeeForm /> */}
@@ -208,18 +212,21 @@ function Trips() {
           <TableBody>
             {recordsAfterPagingAndSorting().map((item) => (
               <TableRow key={item.number}>
+                <TableCell>{item.id}</TableCell>
                 <TableCell>{item.tripId}</TableCell>
-                <TableCell>{item.trainNo}</TableCell>
-                <TableCell>{item.sourceStationCode}</TableCell>
-                <TableCell>{item.destinationStationCode}</TableCell>
-                <TableCell>{item.baseFare}</TableCell>
-                <TableCell>
-                  {getDuration(item.durationHrs, item.durationMns)}
-                </TableCell>
+                <TableCell>{item.tripDate}</TableCell>
+                <TableCell>{item.firstAcAvailableSeats}</TableCell>
+                <TableCell>{item.secondAcAvailableSeats}</TableCell>
+                <TableCell>{item.thirdAcAvailableSeats}</TableCell>
+                <TableCell>{item.firstClassAcAvailableSeats}</TableCell>
+                <TableCell>{item.chairCarAcAvailableSeats}</TableCell>
+                <TableCell>{item.sleeperAvailableSeats}</TableCell>
+                <TableCell>{item.status}</TableCell>
                 <TableCell>
                   <Button
                     color="primary"
                     onClick={() => {
+                      setTripScheduleForEdit(item)
                       openInPopup(item);
                     }}
                   >
@@ -227,8 +234,7 @@ function Trips() {
                   </Button>
                   <Button color="secondary"
                     onClick={()=>{
-                      setTripForEdit(item)
-                      deleteTrip(item)
+                      deleteTripSchedule(item)
                     }}
                   >
                     <CloseIcon fontSize="small" />
@@ -240,11 +246,11 @@ function Trips() {
         </TblContainer>
         <TblPagination />
       </Paper>
-      <Popup title="Add Trip" openPopup={open} setOpenPopup={setOpen}>
-        <AddTrip tripForEdit={tripForEdit} addOrEdit={addOrEdit} setOpen={setOpen} isAdd={isAdd}/>
+      <Popup title="Add Trip Schedule" openPopup={open} setOpenPopup={setOpen}>
+          <AddTripSchedule tripScheduleForEdit={tripScheduleForEdit} addOrEdit={addOrEdit} setOpen={setOpen} isAdd={isAdd} />
       </Popup>
     </div>
   );
 }
 
-export default Trips;
+export default TripSchedules;

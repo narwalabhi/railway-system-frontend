@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import AddIcon from "@material-ui/icons/Add";
 import Search from "@material-ui/icons/Search";
 import PageHeader from "../pageHeader/PageHeader";
 import useTable from "../useTable/useTable";
 import Controls from "../controls/Controls";
-import Popup from "../controls/Popup";
-import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import CloseIcon from "@material-ui/icons/Close";
-import CardTravelIcon from "@material-ui/icons/CardTravel";
-// import AddTrip from './AddTrip'
 import PeopleIcon from "@material-ui/icons/People";
 import {
   Paper,
@@ -52,9 +47,7 @@ const headCells = [
 
 function Tickets() {
   const classes = useStyles();
-  const [ticketForEdit, setTicketForEdit] = useState(null);
   const [tickets, setTickets] = useState([]);
-  const [isAdd, setIsAdd] = useState(false)
   const [open, setOpen] = useState();
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
@@ -102,41 +95,6 @@ function Tickets() {
     });
   };
 
-
-  const getDuration = (hrs, mins) => {
-    return "" + hrs + " hrs " + mins + " mins";
-  };
-
-  const updateUser = async (user) => {
-    console.log(user.name + " " + user.number + " " );
-    console.log(JSON.stringify(user) + "data");
-    const updatedUser = axios.put("http://localhost:8084/user/update/"+ticketForEdit.id,user,{
-      mode: "no-cors",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-        authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
-      },
-    })
-    return updatedUser;
-  }
-
-  const addUser = (user) => {
-    console.log(JSON.stringify(user));
-    const newUser = axios.post("http://localhost:8084/user/add",user,{
-      mode: "no-cors",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-        authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ0NzE3NywiaWF0IjoxNjE5NDExMTc3LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.NITXQMra4fmT0iTIIKECVqWZbEfiMYpIREpMv91x-jY",
-      },
-    })
-    console.log( newUser.data + "new");
-    return newUser;
-  };
-
   const deleteTicket = (ticket) => {
     console.log(ticket + " delete");
     const deletedTicket = axios.delete("http://localhost:8084/booking/delete/"+ticket.ticketId,{
@@ -148,37 +106,9 @@ function Tickets() {
         "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFyd2FsQGdtYWlsLmNvbSIsImV4cCI6MTYxOTQ4MzQyNSwiaWF0IjoxNjE5NDQ3NDI1LCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl19.JMBjtl1p-1BAAtLZcZADa3k2_YRjBd2dEBqwkUTaq9I",
       },
     })
+    loadTickets()
     console.log(deletedTicket.data);
-  }
-
-  const addOrEdit = (user, isAdd) => {
-    if(isAdd){
-      const newUser = addUser(user);
-      console.log(newUser);
-    }else{
-      const updatedUser = updateUser(user);
-      console.log(user + "addOrEdit");
-    }
-  };
-
-
-  const onClickBtn = () => {
-    setOpen(true);
-    setTicketForEdit(null);
-    setIsAdd(true)
-    console.log(open);
-  };
-
-  const openInPopup = (item) => {
-    setOpen(true);
-    setIsAdd(false)
-    setTicketForEdit(item);
-    console.log(open);
-  };
-
-  const getDOB = (dateString) => {
-    const date = new Date(dateString);
-    return date.getDate() + "-" + (date.getMonth()+1) + "-" + date.getFullYear();
+    console.log(tickets);
   }
 
   const getClass = (seats)=>{
@@ -225,7 +155,6 @@ function Tickets() {
                 <TableCell>
                   <Button color="secondary"
                     onClick={()=>{
-                      setTicketForEdit(item)
                       deleteTicket(item)
                     }}
                   >
@@ -238,9 +167,6 @@ function Tickets() {
         </TblContainer>
         <TblPagination />
       </Paper>
-      <Popup title="Add User" openPopup={open} setOpenPopup={setOpen}>
-        {/* <AddUser userForEdit={ticketForEdit} addOrEdit={addOrEdit} setOpen={setOpen} isAdd={isAdd}/> */}
-      </Popup>
     </div>
   );
 }
